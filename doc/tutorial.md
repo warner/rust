@@ -1,5 +1,9 @@
 % Rust Language Tutorial
 
+warner: other notes
+* logging: "error" and "info" are builtins? Does that interfere with (quite
+  natural) use of those words as variables/etc?
+
 # Introduction
 
 ## Scope
@@ -406,11 +410,12 @@ Note that, in Rust, no implicit conversion between integer types
 happens. If you are adding one to a variable of type `uint`, you must
 type `v += 1u`—saying `+= 1` will give you a type error.
 
-Floating point numbers are written `0.0`, `1e6`, or `2.1e-4`. Without
-a suffix, the literal is assumed to be of type `float`. Suffixes `f32`
-and `f64` can be used to create literals of a specific type. The
-suffix `f` can be used to write `float` literals without a dot or
-exponent: `3f`.
+Floating point numbers are written `0.0`, `1e6`, or `2.1e-4`. Without a
+suffix, the literal is assumed to be of type `float`. Suffixes `f32` and
+`f64` can be used to create literals of a specific type. The suffix `f` can
+be used to write `float` literals without a dot or exponent: `3f`. The
+radix prefix takes precedence: `0x1f` is an `int` with value `31`, not a
+`float` with value `1.0`.
 
 The nil literal is written just like the type: `()`. The keywords
 `true` and `false` produce the boolean literals.
@@ -888,11 +893,17 @@ compiler can look at the argument type to find out what the parameter
 types are.
 
 As a further simplification, if the final parameter to a function is a
-closure, the closure need not be placed within parentheses. You could,
+closure, the closure need not be placed within the parentheses. You could,
 for example, write...
 
 ~~~~
 let doubled = vec::map([1, 2, 3]) {|x| x*2};
+~~~~
+
+instead of
+
+~~~~
+let doubled = vec::map([1, 2, 3], {|x| x*2});
 ~~~~
 
 `vec::map` is a function in the core library that applies its last
@@ -914,6 +925,12 @@ Binding a function produces a boxed closure (`fn@` type) in which some
 of the arguments to the bound function have already been provided.
 `daynum` will be a function taking a single string argument, and
 returning the day of the week that string corresponds to (if any).
+
+warner: Is "_" magic? Does daynum(2) result in:
+
+ vec::position_elt([..], 2);
+or
+ vec::position_elt([..], _, 2); ?
 
 ## Iteration
 
@@ -951,6 +968,8 @@ for_rev([1, 2, 3]) {|n|
 
 Note that, because `for_rev()` returns unit type, no semicolon is
 needed when the final closure is pulled outside of the parentheses.
+
+warner: what is "unit type"? This is the first instance.
 
 # Datatypes
 
@@ -1028,6 +1047,12 @@ The field names of a record do not have to appear in a pattern in the
 same order they appear in the type. When you are not interested in all
 the fields of a record, a record pattern may end with `, _` (as in
 `{field1, _}`) to indicate that you're ignoring all other fields.
+
+warner: can you ignore multiple fields at once, with the same `_` name?:
+
+~~~~
+    {x, _, y, _} { stuff }
+~~~~
 
 ## Enums
 
